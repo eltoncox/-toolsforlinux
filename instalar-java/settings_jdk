@@ -1,0 +1,36 @@
+
+sudo update-alternatives --install /usr/bin/java java /opt/jdk-17.0.11/bin/java 2
+sudo update-alternatives --install /usr/bin/jar jar /opt/jdk-17.0.11/bin/jar 2
+sudo update-alternatives --install /usr/bin/javac javac /opt/jdk-17.0.11/bin/javac 2
+sudo update-alternatives --set jar /opt/jdk-17.0.11/bin/jar 
+sudo update-alternatives --set javac /opt/jdk-17.0.11/bin/javac 2
+
+sudo update-alternatives --config java
+sudo updatedb
+
+export JAVA_HOME=/opt/jdk-17.0.11
+export PATH=$PATH:/opt/jdk-17.0.11/bin
+
+
+
+PARA REMOVER O JAVA 
+
+
+sudo update-alternatives --remove java /opt/jdk-23.0.1/bin/java
+sudo update-alternatives --remove jar /opt/jdk-23.0.1/bin/jar
+sudo update-alternatives --remove javac /opt/jdk-23.0.1/bin/javac
+
+Limpar as variáveis de ambiente: Para fazer isso permanentemente, 
+edite o arquivo ~/.bashrc ou ~/.profile e remova ou comente as linhas:
+
+export JAVA_HOME=/opt/jdk-23.0.1
+export PATH=$PATH:/opt/jdk-23.0.1/bin
+
+Depois, atualize as configurações executando:
+source ~/.bashrc
+# ou
+source ~/.profile
+
+Remover o diretório do JDK (opcional): Se não precisar mais do JDK, você pode removê-lo com:
+
+sudo rm -rf /opt/jdk-17.0.11
