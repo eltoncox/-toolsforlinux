@@ -1,4 +1,11 @@
 
+Baixar o jdk em 
+
+https://www.oracle.com/br/java/technologies/downloads/#java17 
+
+jdk-17.0.11_linux-x64_bin.tar.gz
+
+
 sudo update-alternatives --install /usr/bin/java java /opt/jdk-17.0.11/bin/java 2
 sudo update-alternatives --install /usr/bin/jar jar /opt/jdk-17.0.11/bin/jar 2
 sudo update-alternatives --install /usr/bin/javac javac /opt/jdk-17.0.11/bin/javac 2
