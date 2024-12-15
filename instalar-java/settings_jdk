@@ -4,19 +4,31 @@ Baixar o jdk em
 https://www.oracle.com/br/java/technologies/downloads/#java17 
 
 #Escaneando o diretório Downloads com ls
-~/Downloads$ ls
+~/Downloads$ ls -ENTER
 jdk-17.0.11_linux-x64_bin.tar.gz
 
 
 #descompactar
-tar -zxvf jdk-17.0.11_linux-x64_bin.tar.gz
+tar -zxvf jdk-17.0.11_linux-x64_bin.tar.gz -ENTER
+
 
 #Entrar na pasta jdk-17.0.11_linux-x64_bin
-~/Downloads/jdk-17.0.11_linux-x64_bin$ ls
+~/Downloads/jdk-17.0.11_linux-x64_bin$ ls -ENTER
  jdk-17.0.11
  
+ 
  #dar permissão para mover pastar no diretório /opt
- ~/Downloads/jdk-17.0.11_linux-x64_bin$ chmod a+rwx /opt
+ ~/Downloads/jdk-17.0.11_linux-x64_bin$ chmod a+rwx /opt -ENTER
+ 
+ 
+ # mover pasta jdk-17.0.11 para o diretório /opt  
+  ~/Downloads/jdk-17.0.11_linux-x64_bin$ mv jdk-17.0.11 /opt -ENTER
+  
+  
+  # indo para o diretório opt
+  ~/Downloads/jdk-17.0.11_linux-x64_bin$ cd /opt -ENTER
+  
+  
  
  CONFIGURAR O JAVA NO DEBIAN, UBUNTU, MINT E DERIVADOS
 
