@@ -1,0 +1,219 @@
+#00_ Verificando as Informações do Sistema Operacional 
+
+#atalho para acessar o Terminal
+Terminal: Ctrl + Alt + T
+#verificando as versões e codinome do sistema operacional
+#OBSERVAÇÃO IMPORTANTE: Linux Mint 22.x é derivado do Ubuntu Desktop 24.04.x Noble Numbat
+sudo cat /etc/os-release
+sudo cat /etc/lsb-release
+
+#verificando informações de localidade
+sudo localectl
+#modo gráfico para verificar as informações de sistema operacional e hardware
+Menu
+        Informações do Sistema
+
+
+#01_ Atualização do Sistema Operacional 
+#atualizando o sistema operacional 
+_ Atualização do sistema utilizando o Apt;
+#atualizando o sistema operacional via Terminal
+#atalho para acessar o Terminal
+Terminal: Ctrl + Alt + T
+#recomendo utilizando o comando: apt - o comando: apt-get e considerado obsoleto
+sudo apt update
+sudo apt upgrade
+sudo apt full-upgrade
+sudo apt dist-upgrade
+sudo apt autoremove
+sudo apt autoclean
+sudo
+
+#02_ Instalando as Dependências do PostgreSQL Server 
+#INSTALANDO AS DEPENDÊNCIAS DO POSTGRESQL SERVER NO LINUX MINT 21.x
+#opção do comando dpkg: -i (install)
+#opção da contra barra (\): criar uma quebra de linha no terminal
+sudo apt install git vim build-essential software-properties-common gnupg apt-transport-https \
+ca-certificates libssl-dev libffi-dev libgmp3-dev virtualenv python3-pip libpq-dev python2-dev \
+python3-dev libexpat1 ssl-cert
+
+#OBSERVAÇÃO IMPORTANTE: o tempo todo a Biblioteca LibSSL sofre alteração de versão, antes de baixar
+#a versão acesse o site: http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/ e veja qual a 
+#versão atual, altere o script e faça o download.
+
+#download da biblioteca LibSSL1.1.x
+wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb
+
+#instalação da biblioteca LibSSL em modo manual
+#opção do comando dpkg: -i (install) (link atualizado no dia: 06/03/2024)
+sudo dpkg -i libssl1.1_1.1.1*.deb
+
+#03_ Baixando e instalando a Chave GPG do PostgreSQL Server 
+#opção do comando curl: -f (fail), -s (silent), -S (show-error), -L (location)
+#opção do redirecionador |: Conecta a saída padrão com a entrada padrão de outro comando
+#opção do comando gpg: -o (output)
+curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg > /dev/null
+
+#04_ Criando o repositório do PostgreSQL Server
+#ADICIONANDO O REPOSITÓRIO DO POSTGRESQL SERVER 
+#opção do redirecionador |: Conecta a saída padrão com a entrada padrão de outro comando
+echo "deb http://apt.postgresql.org/pub/repos/apt jammy-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+ 
+#05_ Atualizando as Lista do Apt com o novo Repositório do PostgreSQL Server 
+#atualizando as lista do Apt com o novo repositório do PostgreSQL Server
+sudo apt update
+
+#06_ Instalando o PostgreSQL Server e Client 
+#instalando o PostgreSQL Server e suas dependências
+sudo apt install postgresql postgresql-contrib postgresql-client
+#07_ Habilitando o Serviço do PostgreSQL Server 
+#habilitando o serviço do PostgreSQL Server
+sudo systemctl daemon-reload
+sudo systemctl enable postgresql
+sudo systemctl start postgresql
+#08_ Verificando o Serviço e Versão do PostgreSQL Server 
+#verificando o status de serviço do PostgreSQL Server
+sudo systemctl status postgresql
+sudo systemctl restart postgresql
+sudo systemctl stop postgresql
+sudo systemctl start postgresql
+
+#verificando a versão do PostgreSQL Server e Client
+/usr/lib/postgresql/15/bin/postgres --version
+psql --version
+
+#09_ Verificando a Porta de Conexão do PostgreSQL Server 
+#verificando a porta padrão do PostgreSQL
+#opção do comando lsof: -n (network number), -P (port number), -i (list IP Address), -s (alone directs)
+sudo lsof -nP -iTCP:'5432' -sTCP:LISTEN
+
+#10_ Localização dos Arquivos de Configuração do PostgreSQL Server 
+#OBSERVAÇÃO IMPORTANTE: LANÇADO NO MÊS SETEMBRO/2023 A VERSÃO 16 DO POSTGRESQL SERVER,
+#OS PROCEDIMENTOS ADOTADOS NESSE VÍDEO SERVER PARA ESSE VERSÃO, MUDANDO APENAS O NÚMERO
+#localização dos arquivos do PostgreSQL Server na versão 16
+/etc/postgresql/16/main/postgresql.conf   <-- arquivo de configuração do Servidor PostgreSQL
+/etc/postgresql/16/main/pg_hba.conf       <-- arquivo de liberação de rede do Servidor PostgreSQL
+/var/log/postgresql/                      <-- diretório dos Logs do Servidor PostgreSQL
+/var/lib/postgresql/16/main               <-- diretório padrão do Banco e Dados do Servidor PostgreSQL
+
+
+#11_ Adicionado o Usuário Local no Grupo Padrão do PostgreSQL Server
+#opções do comando usermod: -a (append), -G (groups), $USER (environment variable)
+sudo usermod -a -G postgres $USER
+newgrp postgres
+id
+#recomendado reinicializar a máquina para aplicar as permissões
+sudo reboot
+
+#12_ Testando a conexão com o PostgreSQL Server 
+#testando a conexão no PostgreSQL com o usuário psql
+#opção do comando sudo: -u (user)
+sudo -u postgres psql
+	#opção do comando \l: (list databases)
+	\l
+	#opção do comando \c: (connection database)
+	\c postgres
+	#opção do comando \dt: (list tables)
+	\dt
+	#opção do comando \db: (database tablespaces)
+	\db
+	#opção do comando \dg: (database roles)
+	\dg
+	#opção do comando \conninfo: (database information connect)
+	\conninfo
+	#opção do comando \du: (database user profile)
+	\du
+	#opção do comando \q: (quit)
+	\q
+
+#13_ Configurando a Senha do Usuário Admin do PostgreSQL Serve
+#adicionando o usuário local no grupo do PostgreSQL
+#opção do comando sudo: -u (user)
+#opção do comando psql: --command (xecute the given command string)
+sudo -u postgres psql --command '\password postgres'
+        Enter new password for user "postgres": pti@2018
+        Enter it again: pti@2018
+
+
+#14_ Permitindo o acesso remoto do PostgreSQL Server 
+#OBSERVAÇÃO IMPORTANTE: ALTERE A VERSÃO DO POSTGRESQL SERVER ANTES DE EDITAR O ARQUIVO
+#DE CONFIGURAÇÃO DE ACESSO REMOTO.
+#editando o arquivo de acesso remoto do PostgreSQL Server na versão 16
+sudo vim /etc/postgresql/16/main/postgresql.conf
+INSERT
+	#habilitando o suporte remoto do PostgreSQL Server
+	#descomentar a linha: 60 e alterar o valor de: listen_addresses = 'localhost' para: listen_addresses = '*'
+	listen_addresses = '*'
+#salvar e sair do arquiv
+ESC SHIFT :x <ENTER>
+#editando o arquivo de acesso remoto do PostgreSQL Server na versão 16
+sudo vim /etc/postgresql/16/main/pg_hba.conf
+INSERT
+	#liberando o acesso remoto ao Banco de Dados PostgreSQL
+	#comentar a linha 97: #host  all  all  127.0.0.1/32  scram-sha-256
+	#adicionar a linha abaixo:
+	host     all             all             0.0.0.0/0               scram-sha-256
+	#comentar a linha 100: #host  all  all  ::1/128  scram-sha-256
+	#adicionar a linha abaixo:
+	host     all             all             ::/0                    scram-sha-256
+#salvar e sair do arquivo
+ESC SHIFT :x <ENTER>
+#reiniciar o serviço do PostgreSQL Server
+sudo systemctl restart postgresql
+sudo systemctl status postgresql
+
+#15_ Download e Instalação do DBeaver Community Edition 
+#Link atualizado em: 06/01/2023 (Versão atual 23.3.1 compilada em: 24/12/2023)
+Link Oficial do DBeaver Community: https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb
+
+01) Na pasta de Download, clicar duas vezes no Instalador do DBeaver Community;
+02) Seguir os procedimentos na tela.
+
+#conectando no PostgreSQL utilizando o DBeaver-CE
+Menu
+        Pesquisa Indexada: DBeaver-ce
+                Select your database: PostgreSQL <Avançar>
+                        Main
+                                Server
+                                        Connect by: Host
+                                        URL: jdbc:postgresql://localhost:5432/postgres
+                                        Host: localhost
+                                        Port: 5432
+                                        Database: postgres
+                                Authentication
+                                        Authentication: Database Native
+                                        Username: postgres
+                                        Password: pti@2018
+                                        Save password locally: Yes
+                        <Test Connection>
+                <Concluir>
+
+#16_ Download e Instalação do PGAdmin4
+Ir em https://www.pgadmin.org/download/pgadmin-4-apt/
+#
+# Setup the repository
+#
+
+# Install the public key for the repository (if not done previously):
+curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
+
+
+# Create the repository configuration file:
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+
+#
+# Install pgAdmin
+#
+
+# Install for both desktop and web modes:
+sudo apt install pgadmin4
+
+# Install for desktop mode only:
+sudo apt install pgadmin4-desktop
+
+# Install for web mode only: 
+sudo apt install pgadmin4-web 
+
+# Configure the webserver, if you installed pgadmin4-web:
+sudo /usr/pgadmin4/bin/setup-web.sh
+
